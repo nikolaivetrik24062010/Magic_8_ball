@@ -1,79 +1,65 @@
-# Magic 8 Ball – Android Security Research Project
+# Magic 8 Ball – Logic Deconstruction & Reverse Engineering Case Study
 
-Simple Android application created as a **learning and security research exercise**.  
-The purpose of this project is **not the functionality itself**, but understanding how simple apps are built, analyzed, reverse-engineered, and protected.
-
----
-
-## 🎯 Security Learning Goal
-
-- Analyze application logic and behavior
-- Understand how client-side logic can be:
-  - Reversed
-  - Modified
-  - Hooked
-- Practice basic mobile application analysis
-- Identify what **should not be trusted on the client**
-- Build intuition for:
-  - Tampering risks
-  - Logic exposure
-  - Reverse engineering basics
+A lightweight Android application designed as a **Security Research Sandbox**. This project is specifically architected to demonstrate the vulnerabilities of **Hardcoded Business Logic** and the risks associated with **Client-Side Predictability**. It serves as an entry-level project for practicing static and dynamic analysis.
 
 ---
 
-## 📱 Functionality
+## 🎯 Security Research Objectives
 
-- Single button interaction
-- Random answer generation
-- Minimal UI and logic
-- No backend or network dependency
+The core purpose of this project is to explore how an attacker can manipulate "Black Box" logic when it is hosted entirely on the device.
 
-This simplicity makes the app ideal for:
-- Static analysis
-- Dynamic analysis
-- Runtime inspection
-- APK reversing practice
+* **Logic Extraction:** Practicing the recovery of original source code from a compiled APK using `Jadx`.
+* **Predictability Analysis:** Analyzing the entropy of client-side random number generators (RNG) and how they can be seeded or predicted.
+* **Runtime Manipulation:** Using **Frida** to hook the "answer engine" and force a specific outcome (e.g., always returning "Yes").
+* **Binary Hardening:** Comparing the "Readability" of the code before and after applying **R8/ProGuard** obfuscation.
+
+
 
 ---
 
-## 🔍 Security Perspective
+## 🔍 Attack Surface: Predictability & Trust
 
-This project helps understand:
+Even in a simple app, critical AppSec principles are at play:
 
-- How easily app logic can be extracted
-- Why client-side randomness is not secure
-- How predictable logic can be abused
-- What protections are needed in real applications:
-  - Code obfuscation
-  - Logic offloading
-  - Runtime checks
+- **Insecure Randomness:** Researching why `java.util.Random` is insufficient for secure applications and how it can be bypassed.
+- **Hardcoded Strings:** Analyzing the leakage of sensitive or proprietary strings within the compiled binary.
+- **Tampering Vulnerability:** Demonstrating how an attacker can modify the `.dex` file and re-sign the APK to change the application's behavior.
+- **Logic Exposure:** Understanding that any business rule (e.g., a "Win/Loss" decision) implemented strictly in Kotlin is visible to anyone with access to the APK.
 
----
 
-## 🧪 Use Cases
-
-- Mobile Application Security basics
-- Reverse engineering practice
-- Android internals learning
-- Entry-level AppSec training project
-- Preparation for Mobile / Application Security roles
 
 ---
 
-## 📸 Demo
+## 🛡️ Defensive Research & Hardening
 
-![Magic 8 Ball Demo](https://user-images.githubusercontent.com/98304653/194920353-73c32dfe-393a-490f-9a53-62b78a4f0302.gif)
+### 1. Anti-Tampering & Obfuscation
+- **R8 Integration:** Implementation of strict obfuscation rules to mangle method names and strip debug metadata, increasing the time and cost of reverse engineering.
+- **Resource Protection:** Analyzing how string obfuscation can prevent simple `grep` attacks on the binary.
+
+### 2. Architectural Security
+- **Moving the "Source of Truth":** Discussion on why critical logic should be moved to a trusted execution environment (TEE) or a remote backend for high-stakes applications.
+- **Integrity Verification:** (Planned) Exploring the use of the **Play Integrity API** to ensure the app hasn't been modified or re-signed.
+
+---
+
+## 🧠 Technical Stack
+- **Language:** Kotlin
+- **UI:** XML-based simple view interaction
+- **Security Tools:** Jadx-GUI (Static), Frida (Dynamic), MobSF (Vulnerability Scanning).
+
+---
+
+## 🧪 AppSec Practice Scenarios
+- **Scenario A:** Use Jadx to find the array of answers and modify them.
+- **Scenario B:** Write a Frida script to intercept the `Random.nextInt()` call and return a constant value.
+- **Scenario C:** Analyze the app with MobSF to identify common manifest misconfigurations.
 
 ---
 
 ## 👤 Author
-
-**Nikolay Vetrik**  
-Application Security / Mobile Security Engineer
+**Nikolay Vetrik** – *Senior Security Engineer & Mobile Developer* 📧 [devnikolaivetrik@gmail.com](mailto:devnikolaivetrik@gmail.com) | 🔗 [LinkedIn](https://www.linkedin.com/in/nikolayvetrik24062010/)
 
 ---
 
 ## ⚠️ Disclaimer
-
-This project is intended **strictly for educational and defensive security learning purposes**.  
-No malicious use is encouraged.
+This project is intended **strictly for educational research and defensive security analysis**. It focuses on the fundamental risks of client-side logic and the necessity of application hardening.
